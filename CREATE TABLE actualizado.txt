@@ -1,0 +1,267 @@
+CREATE TABLE Documentos (
+Cod_doc INT  NOT NULL AUTO_INCREMENT,
+Descripcion VARCHAR (40)NULL,
+PRIMARY KEY (Cod_doc)
+);
+
+CREATE TABLE Oficinas (
+cod_oficina INT NOT NULL AUTO_INCREMENT,
+codigo_director INT NULL,
+descripcion VARCHAR (40),
+PRIMARY KEY (cod_oficina)
+);
+ALTER TABLE Oficinas AUTO_INCREMENT = 001;
+
+CREATE TABLE empleados (
+cod_empleados INT NOT NULL AUTO_INCREMENT,
+apellido VARCHAR (20) NULL,
+nombre VARCHAR (20) NULL,
+fecha_nac DATE,
+num_doc INT(10),
+cod_jefe INT  NULL,
+cod_oficina INT NOT NULL,
+Cod_doc INT NOT NULL,
+PRIMARY KEY (cod_empleados), 
+FOREIGN KEY(cod_jefe) REFERENCES empleados (cod_empleados),
+FOREIGN KEY (cod_oficina) REFERENCES oficinas (cod_oficina),
+FOREIGN KEY (Cod_doc) REFERENCES documentos (Cod_doc)
+);
+    
+CREATE TABLE Contratos(
+fecha_contrato DATE ,
+cod_empleados INT,
+cuota INT NULL,
+ventas VARCHAR (20)NULL,
+PRIMARY KEY (fecha_contrato),
+FOREIGN KEY (cod_empleados) REFERENCES empleados(cod_empleados) 
+);
+
+CREATE TABLE Fabricante(
+cod_fabricante INT AUTO_INCREMENT,
+razon_social VARCHAR(30) NULL,
+PRIMARY KEY (cod_fabricante)
+);
+
+CREATE TABLE Listas (
+cod_lista INT NOT NULL AUTO_INCREMENT,
+descripcion VARCHAR(30) NULL,
+ganancia FLOAT ,
+PRIMARY KEY (cod_lista)  
+);
+
+CREATE TABLE Productos (
+cod_producto INT AUTO_INCREMENT,
+descripcion VARCHAR (30) NULL,
+precio FLOAT NULL,
+cantidad_stock INT,
+punto_reposicion INT NULL,
+cod_fabricante INT,
+PRIMARY KEY (cod_producto), 
+FOREIGN KEY (cod_fabricante) REFERENCES Fabricante(cod_fabricante)
+);
+
+CREATE TABLE Precios(
+cod_producto INT ,
+cod_lista INT NOT NULL,
+precio FLOAT,
+PRIMARY KEY (cod_producto,cod_lista),
+FOREIGN KEY (cod_producto) REFERENCES Productos ( cod_producto),
+FOREIGN KEY (cod_lista) REFERENCES Listas (cod_lista)
+);
+
+CREATE TABLE Cliente (
+cod_cliente INT AUTO_INCREMENT,
+cod_lista INT NOT NULL,
+razon_social VARCHAR (30) NULL,
+PRIMARY KEY (cod_cliente),
+FOREIGN KEY(cod_lista) REFERENCES listas(cod_lista)   
+);
+
+
+CREATE TABLE pedidos (
+cod_pedido INT AUTO_INCREMENT,
+fecha_pedido DATE,
+cod_empleados INT NOT NULL,
+cod_cliente INT NOT NULL,
+PRIMARY KEY (cod_pedido),
+FOREIGN KEY (cod_empleados) REFERENCES empleados (cod_empleados),
+FOREIGN KEY ( cod_cliente) REFERENCES cliente (cod_cliente)
+);
+
+CREATE TABLE detalle_pedido(
+cod_pedido INT NOT Null,
+numero_linea INT NOT NULL,
+cod_producto INT ,
+cantidad INT NOT NULL,
+PRIMARY KEY(cod_pedido,numero_linea),
+FOREIGN KEY (cod_pedido) REFERENCES pedidos(cod_pedido),
+FOREIGN KEY (cod_producto) REFERENCES Productos(cod_producto) 
+);
+
+INSERT INTO documentos (descripcion)
+VALUES
+('DNI'),
+('PASAPORTE'),
+('CEDULA');
+
+INSERT INTO Oficinas (codigo_director, descripcion)
+VALUES
+(100, 'contaduria'),
+(102, 'rrhh'),
+(103, 'marketing'),
+(104, 'planificacion'),
+(105, 'facturacion'),
+(NULL,'directorio');
+
+
+INSERT INTO empleados (apellido, nombre, fecha_nac, num_doc, cod_jefe, cod_oficina, Cod_doc)
+VALUES 
+('Martínez', 'Ana', '1975-04-20', 12345678, NULL, 1, 1),   
+('González', 'Luis', '1980-03-15', 87654321, NULL, 2, 2), 
+('Ramírez', 'Carlos', '1982-07-30', 11223344, NULL, 3, 3);
+
+
+
+INSERT INTO empleados (apellido, nombre, fecha_nac, num_doc, cod_jefe, cod_oficina, Cod_doc)
+VALUES 
+('Pérez', 'María', '1990-06-10', 22334455, 1, 1, 1),
+('López', 'Jorge', '1988-11-22', 33445566, 2, 2, 2), 
+('Sánchez', 'Lucía', '1992-01-15', 44556677, 3, 3, 3);
+
+
+ALTER TABLE Cliente AUTO_INCREMENT = 1;
+
+
+INSERT INTO contratos (fecha_contrato, cod_empleados, cuota, ventas)
+VALUES
+('2014-02-01', 1,5,'103 televisor'),
+('2018-03-01', 2,12,'106 celular'),
+('2016-04-11', 1,4,'108 heladera'),
+('2015-05-21', 2,8,'102 pc escritorio'),
+('2020-08-08', 1,3,'101 proyector'),
+('2017-10-16', 5,9,'110 frezeer'),
+('2014-12-25', 4,12,'107 televisor');
+ 
+INSERT INTO contratos (fecha_contrato, cod_empleados, cuota, ventas)
+VALUES
+('2015-02-01', 3,5000,'103 televisor');
+
+UPDATE contratos
+SET cuota = 126000
+WHERE cod_empleados = 4;
+
+UPDATE contratos
+SET cuota = 120000
+WHERE cod_empleados = 2;
+
+UPDATE contratos
+SET cuota = 340000
+WHERE cod_empleados = 1;
+
+
+
+INSERT INTO fabricante (razon_social)
+VALUES
+('electrolux'),
+('san remo'),
+('5 brother'),
+('e-lix'),
+('anux'),
+('olux'),
+('visortv'),
+('z-tres');
+
+INSERT INTO Listas (descripcion, ganancia)
+VALUES
+('Electrodomésticos', 15.5),
+('Tecnología', 20.0),
+('Muebles', 10.0),
+('Indumentaria', 18.5);
+
+
+INSERT INTO cliente ( cod_lista, razon_social)
+VALUES
+(2, 'lopez.sa'),
+(2, 'Guillermo Garcia'),
+(2, 'los molinos s.a'),
+(2,'tecno'),
+(1, 'Fravega'),
+(1, 'musimundo'),
+(1,'hiper rodo'),
+(3, 'muebles.sa'),
+(4, 'todo ropa'),
+(4,'rosa teens');
+
+
+
+
+
+INSERT INTO pedidos(fecha_pedido, cod_empleados, cod_cliente)
+VALUES
+('2014-12-25', 6,1),
+('2004-10-23', 5,2),
+('2018-08-05', 4,3),
+('2020-07-15', 4,4),
+('2018-06-08', 4,5),
+('2017-05-10', 4,6),
+('2022-05-19', 5,5),
+('2023-10-09', 5,6),
+('2020-11-20', 5,4),
+('2024-10-22', 5,8),
+('2023-09-12', 4,9),
+('2023-10-11', 6,7);
+
+INSERT INTO pedidos (fecha_pedido,cod_empleados,cod_cliente)
+VALUES
+('2016-03-28',6,1),
+('2015-03-12',5,4),
+('2016-03-14',3,1);
+
+ALTER TABLE pedidos AUTO_INCREMENT = 1;
+
+INSERT INTO productos (descripcion, precio, cantidad_stock, punto_reposicion, cod_fabricante)
+VALUES
+('Heladera', 150000, 10, 3, 1),
+('Cocina', 120000, 5, 2, 2),
+('Microondas', 75000, 8, 2, 1),
+('Smart TV', 200000, 15, 5, 7),
+('Notebook', 250000, 12, 4, 4),
+('Celular', 100000, 20, 6, 6),
+('Ropero', 95000, 7, 2, 3),
+('Mesa comedor', 130000, 4, 2, 3),
+('Remera', 15000, 30, 10, 5),
+('Pantalón', 18000, 25, 10, 5);
+
+
+INSERT INTO precios (cod_producto, cod_lista, precio)
+VALUES
+(1, 1, 180000),
+(2, 1, 145000),
+(3, 1, 85000),
+(4, 2, 230000),
+(5, 2, 275000),
+(6, 2, 110000),
+(7, 3, 110000),
+(8, 3, 150000),
+(9, 4, 18000),
+(10, 4, 20000);
+
+
+INSERT INTO detalle_pedido (cod_pedido, numero_linea, cod_producto, cantidad)
+VALUES
+(1, 1, 1, 1),
+(1, 2, 3, 2),
+(2, 1, 4, 1),
+(3, 1, 6, 3),
+(4, 1, 9, 4),
+(5, 1, 10, 2),
+(6, 1, 5, 1),
+(7, 1, 2, 1),
+(8, 1, 7, 1),
+(9, 1, 8, 2),
+(10, 1, 3, 1),
+(11, 1, 6, 2),
+(12, 1, 4, 1);
+ 
+
+

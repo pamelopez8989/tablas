@@ -1,0 +1,131 @@
+/*De cada producto listar descripción, razón social del fabricante
+y stock ordenado por razón social y descripción*/
+
+SELECT 
+p.descripcion AS producto,
+f.razon_social AS fabricante,
+p.cantidad_stock AS stock
+FROM 
+productos p, fabricante f
+WHERE 
+p.cod_fabricante = f.cod_fabricante
+ORDER BY 
+f.razon_social, p.descripcion;
+
+/*De cada pedido listar código de pedido, fecha de pedido,
+apellido del empleado y razón social del cliente. En el ejemplo puse que solo muestre diez ejemplo*/
+
+SELECT 
+  p.cod_pedido AS Codigo_Pedido,
+  p.fecha_pedido AS Fecha_Pedido,
+  e.apellido AS Apellido_Empleado,
+  c.razon_social AS Razon_Social_Cliente
+FROM 
+  pedidos p,
+  empleados e,
+  cliente c
+WHERE 
+  p.cod_empleados = e.cod_empleados
+  AND p.cod_cliente = c.cod_cliente
+ORDER BY 
+  p.cod_pedido
+LIMIT 10;
+
+/*Listar por cada empleado apellido, cuota asignada, oficina a la
+que pertenece ordenado en forma descendente por cuota.*/
+
+SELECT 
+  e.apellido AS empleado,
+  c.cuota AS Cuota_Asignada,
+  o.descripcion AS Oficina
+FROM 
+  empleados e,
+  contratos c,
+  oficinas o
+WHERE 
+  e.cod_empleados = c.cod_empleados
+  AND e.cod_oficina = o.cod_oficina
+ORDER BY 
+  c.cuota DESC;
+    
+
+/*Listar sin repetir la razón social de todos aquellos clientes que
+hicieron pedidos en Abril, primero modifique 3 clientes las fechas*/  
+  
+UPDATE pedidos
+SET fecha_pedido = '2023-04-15'
+WHERE cod_pedido = 3;
+
+UPDATE pedidos
+SET fecha_pedido = '2024-04-22'
+WHERE cod_pedido = 5;
+
+UPDATE pedidos
+SET fecha_pedido = '2023-04-15'
+WHERE cod_pedido = 1;
+
+
+SELECT DISTINCT 
+c.razon_social AS cliente, 
+p.fecha_pedido AS fecha
+FROM pedidos p, cliente c
+WHERE p.cod_cliente = c.cod_cliente
+AND MONTH(p.fecha_pedido) = 4;
+
+/*Listar sin repetir los productos que fueron pedidos en Marzo.*/
+  
+SELECT DISTINCT pr.descripcion AS nomprod
+FROM detalle_pedido d, pedidos p, productos pr
+WHERE d.cod_pedido = p.cod_pedido
+AND d.cod_producto = pr.cod_producto
+AND MONTH(p.fecha_pedido) = 3;
+
+/*Listar aquellos empleados que están contratados por más de 10
+años ordenado por cantidad de años en forma descendente.*/
+
+SELECT 
+e.cod_empleados,
+e.apellido,
+e.nombre,
+  YEAR(CURDATE()) - YEAR(c.fecha_contrato) AS antiguedad
+FROM contratos c, empleados e
+WHERE e.cod_empleados = c.cod_empleados
+  AND (YEAR(CURDATE()) - YEAR(c.fecha_contrato)) > 10
+ORDER BY antiguedad DESC;
+
+
+
+
+
+
+
+
+/*Obtener una lista sin repetir que indique qué productos compró
+cada cliente, ordenada por razón social y descripción.*/
+
+
+SELECT DISTINCT 
+p.descripcion,
+FROM productos p, cliente c, pedidos ped
+WHERE p.cod_producto = ped.
+
+
+
+/* Obtener una lista con la descripción de aquellos productos cuyo
+stock está por debajo del punto de reposición indicando
+cantidad a comprar y razón social del fabricante ordenada por
+razón social y descripción*/
+
+SELECT p.descripcion, f.razon_social, p.cantidad_stock, p.punto_reposicion
+FROM productos p, fabricante f
+WHERE p.cod_fabricante= f.cod_fabricante
+AND p.cantidad_stock < p.punto_reposicion;
+
+
+/*Listar aquellos empleados cuya cuota es menor a 50000 o
+mayor a 100000*/
+
+SELECT e.cod_empleados, e.nombre, c.cuota
+FROM empleados e, contratos c
+WHERE e.cod_empleados = c.cod_empleados
+  AND (c.cuota < 50000 OR c.cuota > 100000);
